@@ -806,6 +806,9 @@ Function brstTtrnRun(test as object) as object
         print "OK"
     end if
     print ""
+
+    xUnitRunner().run(test, result)
+
     return result
 
 End Function    

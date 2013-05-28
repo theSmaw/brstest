@@ -18,6 +18,7 @@
 PKGREL = ../packages
 ZIPREL = ../zips
 SOURCEREL = ..
+ROKU_DEV_TARGET = 10.65.46.23
 DISTREL = ../dist
 APPNAME = brstest
 VERMAJOR=$(shell cat manifest|grep ^major_version|cut -d '=' -f 2)

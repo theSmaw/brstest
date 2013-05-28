@@ -1,0 +1,83 @@
+Index: source/brstest.brs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- source/brstest.brs	(revision )
++++ source/brstest.brs	(revision )
+@@ -35,7 +35,7 @@
+ 
+ 
+ 
+-Sub BrsTestMain(TestFilePrefix="Test" as string, TestMethodPrefix="test" as string, TestDirectory="pkg:/source" as string)
++Sub BrsTestMain(TestFilePrefix="Test" as string, TestMethodPrefix="test" as string, TestDirectory="pkg:/source/test" as string)
+     'Run all test fixtures found in the package using
+     'the standard naming conventions
+     'Discovers and runs test fixtures based upon the supplied arguments
+@@ -47,7 +47,7 @@
+ 
+ 
+ '====================
+-'Begin Class TestResulta
++'Begin Class TestResult
+ 'Holds information on the result of a series of executed tests.  These are
+ 'automatically managed TestRunner and TestCase classes so test writers
+ 'should not need to consider them.
+@@ -132,11 +132,12 @@
+ 'Begin Class TestFixture
+ 'A single test to be executed which is utilized by the TestCase class
+ 'for execution and the TestResult class for reporting on the result.
+-Function brstNewTestFixture(TestFunc as Object, TestName as String, TestDescription as String) as Object
++Function brstNewTestFixture(TestFunc as Object, TestName as String, TestDescription as String, TestScriptPath as String) as Object
+     new_fix = CreateObject("roAssociativeArray")
+     new_fix.TestFunc = TestFunc
+     new_fix.FuncName = TestName
+     new_fix.Descript = TestDescription
++    new_fix.TestScriptPath = TestScriptPath
+     return new_fix
+ End Function
+ 'End Class TestFixture
+@@ -734,6 +735,7 @@
+         test=err_item[0]
+         err=err_item[1]
+         m.writeline(m.separator1)
++        m.writeline(test._fixture.testScriptPath)
+         m.writeline(flavour + ": " + m.getDescription(test))
+         m.writeline(m.separator2)
+         m.writeline(err)
+@@ -864,7 +866,7 @@
+     'test fixtures based upon the naming convention supplied
+     'at object creation time
+     ret = CreateObject("roList")
+-    SrcsDir = "pkg:/source"
++    SrcsDir = "pkg:/source/test"
+     if Left(fromdirectory, len(SrcsDir)) = SrcsDir then
+         ShouldCompile = False
+     else
+@@ -916,7 +918,7 @@
+     'Returns an enumerable of TestFixture objects from the
+     'contents of a script file designated
+     code = m.readFile(scriptpath)
+-    return m.fixturesFromScriptContents(code)
++    return m.fixturesFromScriptContents(code, scriptpath)
+ End Function
+ 
+ Function brstTlReadFile(fromfile as string) as string
+@@ -925,7 +927,7 @@
+     return ReadAsciiFile(fromfile)
+ End Function
+ 
+-Function brstTlFixturesFromScriptContents(scriptstr as string) as Object
++Function brstTlFixturesFromScriptContents(scriptstr as string, scriptpath as string) as Object
+     'Returns an enumerable of TestFixture objects from the contents
+     'of a test script file
+     'Assumes that the code file has already been compiled and the
+@@ -945,7 +947,7 @@
+             fname = tokens[0]
+             if UCase(Left(fname, len(m.testMethodPrefix))) = UCase(m.testMethodPrefix) then 
+                 eval("fobj=" + fname)
+-                fixt = brstNewTestFixture(fobj, fname, "")
++                fixt = brstNewTestFixture(fobj, fname, "", scriptpath)
+                 fixtures.AddTail(fixt)
+             end if
+         end if
