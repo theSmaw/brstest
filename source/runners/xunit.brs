@@ -3,7 +3,7 @@ function xUnitRunner() as Object
 
 
     'public
-    run: function(tests as Object, result as Object) as Void
+    run: function(tests as Object, results as Object) as Void
       xml = CreateObject("roXMLElement")
       xml.SetName("root")
 
@@ -12,13 +12,22 @@ function xUnitRunner() as Object
       testsuite = testsuites.AddBodyElement()
       testsuite.SetName("testsuite")
 
+      ? results.failures
+
+      for each failure in results.failures
+        ? ""
+        ? failure
+      end for
+
       for each test in tests._tests
-        ? test.shortDescription()
+        testcase = testsuite.AddBodyElement()
+        testcase.setName("testcase")
+        testcase.addAttribute("name", test.toString())
       end for
 
       subel2 = xml.AddBodyElement()
-      subel2.SetName("subelement2")
-      printXml(xml, 0)
+      subel2.SetName("subelement2")-
+      'printXml(xml, 0)
     end function
   }
 
